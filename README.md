@@ -8,11 +8,11 @@
 - Requirements
 
 ## Usage
- virtualenv -p python3 .env
- . .env/bin/activate
- pip install -r requirements.txt
- ./rubiks-solver.py
- deactivate
+- virtualenv -p python3 .env
+- . .env/bin/activate
+- pip install -r requirements.txt
+- ./rubiks-solver.py
+- deactivate
 
 
 
