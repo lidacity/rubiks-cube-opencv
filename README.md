@@ -1,3 +1,23 @@
+# Fork
+
+## Changes
+
+- Convert to python3 (only rubiks-solver.py)
+- Refactoring
+- Lite optimization
+- Requirements
+
+## Usage
+virtualenv -p python3 .env
+. .env/bin/activate
+pip install -r requirements.txt
+./rubiks-solver.py
+deactivate
+
+
+
+# Original
+
 Front Face : Black
 Left : Red
 Right : Orange
