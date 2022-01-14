@@ -10,6 +10,6 @@ setup(
     author="lidacity",
     author_email="dzmitry@lidacity.by",
     license="GPLv3",
-    scripts=["usr/bin/example-rubiks-cube-opencv.py"],
+    scripts=["usr/bin/example.py"],
     packages=["rubiks_cube_opencv"],
 )
