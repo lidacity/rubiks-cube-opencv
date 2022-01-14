@@ -1,18 +1,31 @@
-# Fork
+# Fork rubiks-cube-opencv
+
+## python3 install
+```
+$ sudo python3 -m pip install git+https://github.com/lidacity/rubiks-cube-opencv.git
+```
+
+## Overview
+rubiks_cube_opencv.py
+- analyzes all images values to string of the six colors of the cube 3x3x3.
+
 
 ## Changes
-
 - Convert to python3 (only rubiks-solver.py)
+- Convert to pip-capabilities
 - Refactoring
 - Lite optimization
 - Requirements
 
+
 ## Usage
-- virtualenv -p python3 .env
-- . .env/bin/activate
-- pip install -r requirements.txt
-- ./rubiks-solver.py
-- deactivate
+```
+virtualenv -p python3 .env
+. .env/bin/activate
+sudo python3 -m pip install git+https://github.com/lidacity/rubiks-cube-opencv.git
+./example.py
+deactivate
+```
 
 
 
