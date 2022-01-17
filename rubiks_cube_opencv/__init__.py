@@ -39,11 +39,11 @@ Colors = {
  "R": { "Lower": [120, 120, 140], "Upper": [180, 250, 200], }, #red
 }
 
-ARRAY, STRING, COLOR, DICT = range(4)
+ARRAY, STRING, JSON, DICT = range(4)
 
 
 
-def Extract(Image, Face, IsColor=False, Debug=False, Show=False):
+def Extract(Image, Face, IsJson=False, Debug=False, Show=False):
  Result = {}
  #
  Image = cv2.bilateralFilter(Image, 9, 75, 75)
@@ -73,8 +73,9 @@ def Extract(Image, Face, IsColor=False, Debug=False, Show=False):
     Z = None
     for c in Contours[i]:
      Z = 3 * Centroid_y // Height * 3 + 3 * Centroid_x // Width # Achtung! That's right
-     if IsColor:
+     if IsJson:
       Result[Side + Z] = list(np.array(cv2.mean(Image[y:y+h, x:x+w])).astype(np.uint8))[2::-1] #Average color (BGR->RGB)
+      #Result[Side + Z] = [int(i) for i in list(np.array(cv2.mean(Image[y:y+h, x:x+w])))[2::-1]] #Average color (BGR->RGB)
      else:
       Result[Side + Z] = Color
     if Debug:
@@ -146,7 +147,7 @@ def GetRecognize(List=None, Get=DICT, Show=False, Debug=False):
    Image = cv2.imread(List[Side])
   else:
    Image = List[Side]
-  Result[Side] = Extract(Image, Side, IsColor=Get==COLOR, Show=Show, Debug=Debug)
+  Result[Side] = Extract(Image, Side, IsJson=Get==JSON, Show=Show, Debug=Debug)
  #
  Result1 = Result
  if Get == DICT:
@@ -155,7 +156,7 @@ def GetRecognize(List=None, Get=DICT, Show=False, Debug=False):
   Result2 = {}
   for _, Color in Result1.items():
    Result2.update(Color)
-  if Get == COLOR:
+  if Get == JSON:
    return Result2
   #
   Result3 = [Color for _, Color in sorted(Result2.items())]
