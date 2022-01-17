@@ -1,7 +1,7 @@
 #!.env/bin/python
 
 from rubiks_cube_opencv import GetRecognize
-from rubiks_cube_opencv import ARRAY
+from rubiks_cube_opencv import ARRAY, STRING, JSON, DICT
 
 import os
 import sys
@@ -31,8 +31,10 @@ def Solution(Position):
 
 
 def main():
- #print(GetRecognize(Get=ARRAY))
- Cube = GetRecognize(Debug=True)
+ #print(GetRecognize(Debug="report.html", Get=JSON))
+ #sys.exit(0)
+ #
+ Cube = GetRecognize(Debug="report.html")
  F, R, B, L, U, D = Cube["F"], Cube["R"], Cube["B"], Cube["L"], Cube["U"], Cube["D"]
 
 
@@ -143,7 +145,8 @@ def main():
 
  print(f"Position: {Position}")
  print(Solution(Position))
- 
-        
+
+
+
 if __name__ == "__main__":
  main()

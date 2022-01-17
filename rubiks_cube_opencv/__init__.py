@@ -5,6 +5,7 @@ import time
 import numpy as np
 import cv2
 
+import rubiks_cube_opencv.report
 
 #Cube:
 
@@ -42,11 +43,10 @@ Colors = {
 ARRAY, STRING, JSON, DICT = range(4)
 
 
-
-def Extract(Image, Face, IsJson=False, Debug=False, Show=False):
+def Extract(SourceImage, Face, IsJson=False, Debug=None, Show=False):
  Result = {}
  #
- Image = cv2.bilateralFilter(Image, 9, 75, 75)
+ Image = cv2.bilateralFilter(SourceImage, 9, 75, 75)
  Image = cv2.fastNlMeansDenoisingColored(Image, None, 10, 10, 7, 24)
  Width, Height = Image.shape[:2]
  HSV = cv2.cvtColor(Image, cv2.COLOR_BGR2HSV) # HSV image
@@ -78,13 +78,13 @@ def Extract(Image, Face, IsJson=False, Debug=False, Show=False):
       #Result[Side + Z] = [int(i) for i in list(np.array(cv2.mean(Image[y:y+h, x:x+w])))[2::-1]] #Average color (BGR->RGB)
      else:
       Result[Side + Z] = Color
-    if Debug:
+    if Debug is not None:
      cv2.rectangle(Image, (x, y), (x + w, y + h), (0, 255, 255), 2)
      cv2.circle(Image, (Centroid_x, Centroid_y), 4, (255, 255, 255), 2)
      cv2.circle(Image, (Centroid_x, Centroid_y), 2, (0, 0, 255), 2)
      cv2.putText(Image, Color, (Centroid_x, Centroid_y), cv2.FONT_HERSHEY_SIMPLEX, 1, (64, 64, 64), 2)
  #
- if Debug:
+ if Debug is not None:
   Rows = [0, Height // 3, 2 * Height // 3, Height]
   Cols = [0, Width // 3, 2 * Width // 3, Width]
   cv2.line(Image, (Rows[0], Cols[1]), (Rows[3], Cols[1]), (255, 0, 0), 2)
@@ -97,8 +97,7 @@ def Extract(Image, Face, IsJson=False, Debug=False, Show=False):
    cv2.waitKey()
    cv2.destroyAllWindows()
   cv2.imwrite(ImageName, Image)
- if Debug:
-  print(f"{Face}: {Result}")
+ report.WriteSide(Debug, Face, Result, SourceImage, Image)
  return Result
 
 
@@ -139,7 +138,8 @@ def CaptureImage(ImageName, Debug=False, Show=False):
 
 
 def GetRecognize(List=None, Get=DICT, Show=False, Debug=False):
- Result = {}
+ report.Header(Debug)
+ Cube = {}
  for Side in Sides:
   if List is None:
    Image = cv2.imread(os.path.join("images", f"{Side}.bmp"))
@@ -147,22 +147,25 @@ def GetRecognize(List=None, Get=DICT, Show=False, Debug=False):
    Image = cv2.imread(List[Side])
   else:
    Image = List[Side]
-  Result[Side] = Extract(Image, Side, IsJson=Get==JSON, Show=Show, Debug=Debug)
+  Cube[Side] = Extract(Image, Side, IsJson=Get==JSON, Show=Show, Debug=Debug)
  #
- Result1 = Result
+ Result = None
  if Get == DICT:
-  return Result1
+  Result = Cube
  else:
-  Result2 = {}
-  for _, Color in Result1.items():
-   Result2.update(Color)
+  Json = {}
+  for _, Color in Cube.items():
+   Json.update(Color)
   if Get == JSON:
-   return Result2
+   Result = Json
   #
-  Result3 = [Color for _, Color in sorted(Result2.items())]
+  Array = [Color for _, Color in sorted(Json.items())]
   if Get == ARRAY:
-   return Result3
+   Result = Array
   elif Get == STRING:
-   return "".join(Result3)
- return None
+   Result = "".join(Array)
+ report.WriteResult(Debug, Get, Result)
+ #
+ report.Footer(Debug)
+ return Result
 
