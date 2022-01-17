@@ -74,7 +74,7 @@ def Extract(Image, Face, IsJson=False, Debug=False, Show=False):
     for c in Contours[i]:
      Z = 3 * Centroid_y // Height * 3 + 3 * Centroid_x // Width # Achtung! That's right
      if IsJson:
-      Result[Side + Z] = list(np.array(cv2.mean(Image[y:y+h, x:x+w])).astype(np.uint8))[2::-1] #Average color (BGR->RGB)
+      Result[Side + Z] = tuple(np.array(cv2.mean(Image[y:y+h, x:x+w])).astype(np.uint8))[2::-1] #Average color (BGR->RGB)
       #Result[Side + Z] = [int(i) for i in list(np.array(cv2.mean(Image[y:y+h, x:x+w])))[2::-1]] #Average color (BGR->RGB)
      else:
       Result[Side + Z] = Color
