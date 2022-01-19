@@ -99,7 +99,7 @@ deactivate
 ```
 
 
-## Edges
+## Pieces
 
 ### Edge pieces
 
