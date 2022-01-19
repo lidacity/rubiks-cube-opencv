@@ -137,7 +137,7 @@ def CaptureImage(ImageName, Debug=False, Show=False):
 #  sys.exit(0)
 
 
-def GetRecognize(List=None, Get=DICT, Show=False, Debug=False):
+def GetRecognize(List=None, Get=DICT, Show=False, Debug=None):
  report.Header(Debug)
  Cube = {}
  for Side in Sides:

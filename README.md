@@ -16,6 +16,7 @@ rubiks_cube_opencv.py
 - Refactoring
 - Lite optimization
 - Requirements
+- HTML-report
 
 
 ## Usage
