@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>Rubiks Cube OpenCV Recognize</title>
+</head>
+<body>
+<h1>Recognize</h1>
+<hr />
+
+<h2>DateTime</h2>
+<p>{{DateTime}}</p>
+<hr />
+
+<h2>Sides</h2>
+{% for Side in Cube %}
+<h3>Side {{Side}}</h3>
+<table>
+ <tr>
+  <td><img alt='Source Image {{Side}}' src='data:image/jpg;base64,{{Cube[Side].Original}}' /></td>
+  <td>&nbsp;&rarr;&nbsp;</td>
+  <td><img alt='Recognize Image {{Side}}' src='data:image/jpg;base64,{{Cube[Side].Recognize}}' /></td>
+  <td>&nbsp;&rarr;&nbsp;</td>
+  <td><pre>
+{{Cube[Side].Result}}
+  </pre></td>
+ </tr>
+</table>
+{% endfor %}
+<hr />
+
+<h2>Result: {{Name}}</h2>
+<pre>
+{{Result}}
+</pre>
+
+</body>
+</html>

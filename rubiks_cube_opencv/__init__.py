@@ -1,11 +1,11 @@
 import os
 import sys
-import time
+import datetime, time
+import base64
 
 import numpy as np
 import cv2
-
-import rubiks_cube_opencv.report
+from jinja2 import Environment, FileSystemLoader
 
 #Cube:
 
@@ -97,8 +97,13 @@ def Extract(SourceImage, Face, IsJson=False, Debug=None, Show=False):
    cv2.waitKey()
    cv2.destroyAllWindows()
   cv2.imwrite(ImageName, Image)
- report.WriteSide(Debug, Face, Result, SourceImage, Image)
- return Result
+ #report.WriteSide(Debug, Face, Result, SourceImage, Image)
+ Res1, JPG1 = cv2.imencode('.jpg', SourceImage)
+ Res2, JPG2 = cv2.imencode('.jpg', Image)
+ #with open('temp/pic.jpg', 'wb') as f1:
+ # f1.write(JPG1.tobytes())
+ #print(UUE1)
+ return { "Side": Result, "Original": base64.b64encode(JPG1).decode('utf-8'), "Recognize": base64.b64encode(JPG2).decode('utf-8') }
 
 
 def CaptureImage(ImageName, Debug=False, Show=False):
@@ -138,8 +143,8 @@ def CaptureImage(ImageName, Debug=False, Show=False):
 
 
 def GetRecognize(List=None, Get=DICT, Show=False, Debug=None):
- report.Header(Debug)
  Cube = {}
+ Full = {}
  for Side in Sides:
   if List is None:
    Image = cv2.imread(os.path.join("images", f"{Side}.bmp"))
@@ -147,25 +152,58 @@ def GetRecognize(List=None, Get=DICT, Show=False, Debug=None):
    Image = cv2.imread(List[Side])
   else:
    Image = List[Side]
-  Cube[Side] = Extract(Image, Side, IsJson=Get==JSON, Show=Show, Debug=Debug)
+  Full[Side] = Extract(Image, Side, IsJson=Get==JSON, Show=Show, Debug=Debug)
+  Cube[Side] = Full[Side]["Side"]
+  S = []
+  S.append("{")
+  for i, (Key, Value) in enumerate(sorted(Cube[Side].items())):
+   if i % 3 == 0:
+    S.append(f"\n")
+   S.append(f"\t{Key:2d}: '{Value}',")
+  S.append("\n}")
+  Full[Side]["Result"] = "".join(S)
  #
+ S = []
  Result = None
  if Get == DICT:
+  Name = "DICT"
+  S.append("{\n")
+  for Key, Value in sorted(Cube.items()):
+   S.append(f"\t{Key}: {Value},\n")
+  S.append("}")
   Result = Cube
  else:
   Json = {}
   for _, Color in Cube.items():
    Json.update(Color)
   if Get == JSON:
+   Name = "JSON"
+   S.append("{\n")
+   for Key, Value in sorted(Json.items()):
+    S.append(f"\t{Key}: {Value},\n")
+   S.append("}")
    Result = Json
   #
   Array = [Color for _, Color in sorted(Json.items())]
   if Get == ARRAY:
+   Name = "ARRAY"
+   S.append("[\n")
+   for i, Value in enumerate(Array):
+    if i % 9 == 0:
+     S.append("\n\t")
+    S.append(f"'{Value}', ")
+   S.append("\n]")
    Result = Array
   elif Get == STRING:
+   Name = "STRING"
+   S.append("".join(Array))
    Result = "".join(Array)
- report.WriteResult(Debug, Get, Result)
  #
- report.Footer(Debug)
+ if Debug is not None:
+  Env = Environment(loader=FileSystemLoader(__name__))
+  Template = Env.get_template("report.html")
+  HTML = Template.render(DateTime=datetime.datetime.now(), Cube=Full, Name=Name, Result="".join(S))
+  with open(Debug, "w") as File:
+   File.write(HTML)
+ #
  return Result
-
